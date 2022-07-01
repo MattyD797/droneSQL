@@ -4,6 +4,10 @@ Create a database management system for a customized multi-sensor unmanned aircr
 # BAG Files
 Are shared via Google Drive because of size. 
 
+Links:
+
+- [Bates 1](https://drive.google.com/file/d/1fyCKAJazjynLErvuX8s_eGJRpgb-BkZ9/view?usp=sharing)
+
 ## Progress
 - [X] Verify microcontrollers (e.g. RAM, Zero or Zero 2 W) of existing Raspberrys, interface with Robot Operating System (ROS).
 - [X] Install SQLite database code from pi repository (easy and straightforward).
