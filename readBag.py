@@ -8,11 +8,11 @@ import numpy as np
 import multiprocessing as mp
 import sqlite3
 from pathlib import Path
-import rosbag
 
+#Read bag file into Python
 b=bagreader('bags/blF1.bag')
 
-Path('my_data.db').touch()
+#Open SQL database
 conn = sqlite3.connect('my_data.sqlite')
 c = conn.cursor()
 
@@ -28,10 +28,10 @@ CREATE TABLE "my_data"(
 )
 ''')
 
+#Read in all message files in the bag as seperate csvs
 csvfiles = []
 for t in b.topics:
     print(t)
     data = b.message_by_topic(t)
-    
     csvfiles.append(data)
     
