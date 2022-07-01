@@ -1,6 +1,9 @@
 # droneSQL
 Create a database management system for a customized multi-sensor unmanned aircraft system.
 
+# BAG Files
+Are shared via Google Drive because of size. 
+
 ## Progress
 - [X] Verify microcontrollers (e.g. RAM, Zero or Zero 2 W) of existing Raspberrys, interface with Robot Operating System (ROS).
 - [X] Install SQLite database code from pi repository (easy and straightforward).
