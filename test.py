@@ -1,5 +1,8 @@
 import sqlite3
 import rosbag
+import datetime
+import pandas as pd
+import functools as ft
 from createGeoPkge import *
 
 def main():
@@ -23,34 +26,62 @@ def main():
     #Get latitude and longitude data
     print('Processing: '+ topics[2])
     for topic, msg, t in bag.read_messages(topics[2]):
-        time.append(str(msg.header.stamp.secs)+'.'+str(msg.header.stamp.nsecs))
+        time.append(str(t.secs)+'.'+str(t.nsecs))
         latitude.append(msg.latitude)
         longitude.append(msg.longitude)
 
-    df_pos = pd.DataFrame(list(zip(time, latitude, longitude)),
+    #convert from epoch to timestamp 
+    timesec = [datetime.datetime.fromtimestamp(float(i)).strftime('%Y-%m-%d %H:%M:%S.%f') for i in time]
+    df_pos = pd.DataFrame(list(zip(timesec, latitude, longitude)),
                           columns = ["time", "latitude", "longitude"])
 
     #depth data
     print('Processing: '+ topics[17])
     for topic, msg, t in bag.read_messages(topics[17]):
         depth.append(msg.depth.data)
-        depth_time.append(msg.Time)
-        
-    df_depth = pd.DataFrame(list(zip(depth_time, depth)),
+        depth_time.append(str(t.secs)+'.'+str(t.nsecs))
+
+    #convert from epoch to timestamp 
+    depth_timesec = [datetime.datetime.fromtimestamp(float(i)).strftime('%Y-%m-%d %H:%M:%S.%f') for i in depth_time]   
+    df_depth = pd.DataFrame(list(zip(depth_timesec, depth)),
                           columns = ["time", "depth"])
     #fluor data
     print('Processing: '+ topics[12])
     for topic, msg, t in bag.read_messages(topics[12]):
         fluor.append(msg.data)
-        fluor_time.append(msg.Time)
-    df_fluor = pd.DataFrame(list(zip(fluor_time, fluor)),
+        fluor_time.append(str(t.secs)+'.'+str(t.nsecs))
+
+    #convert from epoch to timestamp 
+    fluor_timesec = [datetime.datetime.fromtimestamp(float(i)).strftime('%Y-%m-%d %H:%M:%S.%f') for i in fluor_time]   
+    df_fluor = pd.DataFrame(list(zip(fluor_timesec, fluor)),
                           columns = ["time", "flourescence"])
 
     #TODO: merge dataframes by time
 
+    dfs = [df_pos, df_depth, df_fluor]
 
-    #TODO: interpolate coordinates of depth and fluorescence 
     
+    df_final = ft.reduce(lambda left, right: pd.merge(left,
+                                                      right,
+                                                      how='outer',
+                                                      on='time'),
+                         dfs).sort_values(by='time').reset_index(drop=True)
+
+    
+    #interpolate coordinates of depth and fluorescence 
+    df_final['latitude'] = df_final.set_index('time')['latitude'].interpolate(method="linear").values
+    df_final['longitude'] = df_final.set_index('time')['longitude'].interpolate(method="linear").values
+    df_final['depth'] = df_final.set_index('time')['depth'].interpolate(method="linear").values
+
+    #filter out extraneuos data
+    start = df_final[df_final['time'] == fluor_timesec[0]].index.tolist()[0]-1
+    end = df_final[df_final['time'] == fluor_timesec[-1]].index.tolist()[0]+1
+    df_final_filt = df_final.filter(items= range(start,end+1), axis = 0).dropna()
+    print(df_final_filt)
+
+    #TODO: create features tables fo fluorescence
+
+    #TODO: add geometry to geometry_columns table
         
     #make gpkg database
     database = "my_geopackage.gpkg"
