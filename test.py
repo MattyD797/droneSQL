@@ -3,13 +3,32 @@ import rosbag
 import datetime
 import pandas as pd
 import functools as ft
+import spatialite
+import argparse
+
 from createGeoPkge import *
 
 def main():
+    #Intitalize parser
+    parser = argparse.ArgumentParser()
 
+    #Add input/output file
+    
+    parser.add_argument("-i", "--Input", help = "Show Input")
+    parser.add_argument("-o", "--Output", help = "Show Output")
+
+    #read arguments from command line
+    args = parser.parse_args()
+    
+    with spatialite.connect(args.Output) as conn:
+        print(conn.execute('SELECT spatialite_version()').fetchone()[0])
+    conn.cursor().execute('SELECT InitSpatialMetaData()')
+    conn.commit()
+
+    
     #Reads in bag file
     print('Reading Bag File...')
-    bag = rosbag.Bag('bags/blF1.bag')
+    bag = rosbag.Bag(args.Input)
 
     #Gets all topics encased in bag file
     topics = list(bag.get_type_and_topic_info()[1].keys())
@@ -56,7 +75,7 @@ def main():
     df_fluor = pd.DataFrame(list(zip(fluor_timesec, fluor)),
                           columns = ["time", "flourescence"])
 
-    #TODO: merge dataframes by time
+    #merge dataframes by time
 
     dfs = [df_pos, df_depth, df_fluor]
 
@@ -74,17 +93,13 @@ def main():
     df_final['depth'] = df_final.set_index('time')['depth'].interpolate(method="linear").values
 
     #filter out extraneuos data
-    start = df_final[df_final['time'] == fluor_timesec[0]].index.tolist()[0]-1
-    end = df_final[df_final['time'] == fluor_timesec[-1]].index.tolist()[0]+1
+    start = df_final[df_final['time'] == fluor_timesec[0]].index.tolist()[0]
+    end = df_final[df_final['time'] == fluor_timesec[-1]].index.tolist()[0]
     df_final_filt = df_final.filter(items= range(start,end+1), axis = 0).dropna()
-    print(df_final_filt)
+    #print(df_final_filt)
 
-    #TODO: create features tables fo fluorescence
-
-    #TODO: add geometry to geometry_columns table
         
-    #make gpkg database
-    database = "my_geopackage.gpkg"
+    
 
     sql_create_gpkg_spatial_ref_sys_table = ''' (
                                                   srs_name TEXT NOT NULL,
@@ -119,15 +134,13 @@ def main():
                                         );
                                      '''
 
+    #TODO create geometry column geom Geometry
     sql_create_sample_feature_table = ''' (
                                           id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                          geometry GEOMETRY,
-                                          text_attribute TEXT,
-                                          real_attribute REAL,
-                                          boolean_attribute BOOLEAN,
-                                          raster_or_photo BLOB
+                                          real_attribute REAL
                                         );
                                         '''
+
     
     sql_create_gpkg_geometry_columns_table = ''' (
                                               table_name TEXT NOT NULL,
@@ -142,9 +155,25 @@ def main():
                                               CONSTRAINT fk_gc_srs FOREIGN KEY (srs_id) REFERENCES gpkg_spatial_ref_sys (srs_id)
                                             );
                                             '''
+    
+    feature_geometry = ("sample_feature_table","geom","POINT",srs_def[1],2,2)
+            
+
+    content_input = ("sample_feature_table",
+                     "features",
+                     "fluorescence",
+                    "fluorescence values obtained from custom UAS",
+                    datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%fZ'),
+                     str(df_final_filt.min()[2]),
+                     str(df_final_filt.min()[1]),
+                     str(df_final_filt.max()[2]),
+                     str(df_final_filt.max()[1]),
+                     srs_def[1])
+
                                             
     # create a database connection
-    conn = create_connection(database)
+    #conn = create_connection(database)
+    
 
     # create tables
     if conn is not None:
@@ -159,12 +188,22 @@ def main():
 
         #create a sample_feature_table & necessary gpkg_geometry_columns table
         create_table(conn, sql_create_sample_feature_table, "sample_feature_table")
+        #Add geometry column via spatialite
+        add_geometry_column(conn, "sample_feature_table", "geom", 4326)
+        
+        conn.commit()
+
+        
         create_table(conn, sql_create_gpkg_geometry_columns_table, "gpkg_geometry_columns")
 
         #add features into feature table
-
-        #add geometry column into geometry column tables
+        add_features(conn, df_final_filt, "sample_feature_table")
         
+        #add geometry column into geometry column tables
+        add_geometry(conn, feature_geometry, 1)
+
+        #add gpkg_contents
+        add_content(conn, content_input, 1)
         
         conn.close()
 
