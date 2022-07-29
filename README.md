@@ -1,7 +1,7 @@
 # droneSQL
 Create a database management system for a customized multi-sensor unmanned aircraft system.
 
-# command line
+# Command Line
 ```
 python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path>
 ```
