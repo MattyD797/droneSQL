@@ -1,12 +1,13 @@
 # droneSQL
 Create a database management system for a customized multi-sensor unmanned aircraft system.
 
-# BAG Files
-Are shared via Google Drive because of size. 
+# command line
+```
+python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path>
+```
 
-Links:
-
-- [Bates 1](https://drive.google.com/file/d/1fyCKAJazjynLErvuX8s_eGJRpgb-BkZ9/view?usp=sharing)
+# Example BAG Files
+Are stored in the bags directory. Currently, the repository only has bates landing 1 and 2 (blF1.bag and blF2.bag). 
 
 ## Progress
 - [X] Verify microcontrollers (e.g. RAM, Zero or Zero 2 W) of existing Raspberrys, interface with Robot Operating System (ROS).
