@@ -3,6 +3,15 @@ Create a database management system (DBMS) for a customized multi-sensor unmanne
 
 Geopackages are a relational DBMS constructed with sqlite3. Since sqlite3 lacks some functionality in comparison to a conventional SQL server it needs the spatialite extension to format geometries to a GIS readable BLOB (binary large object). Feel free to change the point geometry to any of the acceptable [types](https://www.gaia-gis.it/gaia-sins/spatialite-cookbook-5/cookbook_topics.02.html). If no lines/points/polygons display in QGIS this means QGIS is unable to read your geometry and you can see this if you try to pan to one of your attributes. QGIS will display an error saying it was unable to find a geometry. 
 
+All commands below are run in the terminal/console. Ensure to configure the required input and output file destinations if running within an IDE, such as PyCharm or similar. 
+
+# Install Scripts
+```
+cd <desired_workspace>
+git clone https://github.com/MattyD797/droneSQL.git
+cd droneSQL
+```
+
 # Required Packages 
 ```
 pip install sqlite3
