@@ -29,6 +29,18 @@ python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path>
 # Example BAG Files
 Are stored in the bags directory. Currently, the repository only has bates landing 1 and 2 (blF1.bag and blF2.bag). 
 
+# Edit/Add 
+```
+git pull
+git checkout -b <branch_name>
+
+#change code
+git add .
+git commit -m "I MADE A CHANCE"
+git push
+git checkout main
+```
+
 ## Progress
 - [X] Verify microcontrollers (e.g. RAM, Zero or Zero 2 W) of existing Raspberrys, interface with Robot Operating System (ROS).
 - [X] Install SQLite database code from pi repository (easy and straightforward).
