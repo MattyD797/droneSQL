@@ -12,6 +12,8 @@ git clone https://github.com/MattyD797/droneSQL.git
 cd droneSQL
 ```
 
+I might advise making an environment via any method of your choosing to ensure package overlap isn't a problem. I used Anaconda (pretty standard), however, this step is optional. 
+
 # Required Packages 
 ```
 pip install sqlite3
@@ -19,7 +21,7 @@ pip install spatialite
 pip install rosbag
 ```
 
-These are the only packages required on my raspberry pi 4B, but you may need to install more depending on the system and your default python packages. Install any of these as well, if required: datetime, pandas, functools, argparse.
+These are the only packages required on my raspberry pi 4B, but you may need to install more depending on the system and your default python packages. Install any of these as well, if required: datetime, pandas, functools, argparse. These are all viewable on top of the script files next to the word "import". 
 
 # Command Line
 ```
@@ -50,6 +52,6 @@ git checkout main
 - [X] Design GIS data models for the kinds of data collected by the drone.
 - [X] Develop modular code (e.g. Python/C functions) to call for writing data to geopackage/database.
 - [X] Test/verify.
-- [ ] Check for single and double precision of coordinates.
+- [X] Check for single and double precision of coordinates.
 - [ ] Test each remotely from existing drone.
 - [ ] Port to Team’s drone for testing.
