@@ -23,7 +23,18 @@ These are the only packages required on my raspberry pi 4B, but you may need to 
 
 # Command Line
 ```
+# To create a new geopackage
 python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path>
+
+# To add SD data into geopackage
+python addSD.py -g <geopackage_path> -i <SD_path>
+
+# To add another bag file into geopackage
+python addFeatureTable.py -g <geopackage_path> -i <bag_file_path>
+
+# To remove a table (feature or attribute) from geopackage
+# Warning: must have at least one feature table in gpkg, otherwise, remake geopackage with droneGPKG.py
+python removeFeatureTable.py -g <geopackage_path> -t <table_name>
 ```
 
 # Example BAG Files
@@ -45,6 +56,10 @@ git checkout main
 ### No points/geometry displaying on QGIS
 
 Geopackages are a relational DBMS constructed with sqlite3. Since sqlite3 lacks some functionality in comparison to a conventional SQL server it needs the spatialite extension to format geometries to a GIS readable BLOB (binary large object). Feel free to change the point geometry to any of the acceptable [types](https://www.gaia-gis.it/gaia-sins/spatialite-cookbook-5/cookbook_topics.02.html). If no lines/points/polygons display in QGIS this means QGIS is unable to read your geometry and you can see this if you try to pan to one of your attributes. QGIS will display an error saying it was unable to find a geometry. 
+
+### geopackage or sql table already exists
+
+SQL only allows for uniquely named tables. This means that this table name is already in use. 
 
 ## Progress
 - [X] Verify microcontrollers (e.g. RAM, Zero or Zero 2 W) of existing Raspberrys, interface with Robot Operating System (ROS).
