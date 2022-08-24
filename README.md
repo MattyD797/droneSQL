@@ -52,7 +52,7 @@ git push
 git checkout main
 ```
 
-# General Problems
+# General Precautions
 ### No points/geometry displaying on QGIS
 
 Geopackages are a relational DBMS constructed with sqlite3. Since sqlite3 lacks some functionality in comparison to a conventional SQL server it needs the spatialite extension to format geometries to a GIS readable BLOB (binary large object). Feel free to change the point geometry to any of the acceptable [types](https://www.gaia-gis.it/gaia-sins/spatialite-cookbook-5/cookbook_topics.02.html). If no lines/points/polygons display in QGIS this means QGIS is unable to read your geometry and you can see this if you try to pan to one of your attributes. QGIS will display an error saying it was unable to find a geometry. 
@@ -60,5 +60,9 @@ Geopackages are a relational DBMS constructed with sqlite3. Since sqlite3 lacks 
 ### geopackage or sql table already exists
 
 SQL only allows for uniquely named tables. This means that this table name is already in use. 
+
+### All false statements in BOOLEAN values
+
+Ensure the interpolation for boolean is set to "backfill". Otherwise, null values are seen as FALSE. 
 
 
