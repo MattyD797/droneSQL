@@ -24,7 +24,7 @@ These are the only packages required on my raspberry pi 4B, but you may need to 
 # Command Line
 ```
 # To create a new geopackage
-python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path>
+python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path> -f "<path-name>"
 
 #DEBUG: To add SD data into geopackage
 python addSD.py -g <geopackage_path> -i <SD_path>
