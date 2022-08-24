@@ -26,13 +26,13 @@ These are the only packages required on my raspberry pi 4B, but you may need to 
 # To create a new geopackage
 python droneGPKG.py -i <bag_file_path> -o <gpkg_output_path>
 
-# To add SD data into geopackage
+#DEBUG: To add SD data into geopackage
 python addSD.py -g <geopackage_path> -i <SD_path>
 
-# To add another bag file into geopackage
+#DEGUB: To add another bag file into geopackage
 python addFeatureTable.py -g <geopackage_path> -i <bag_file_path>
 
-# To remove a table (feature or attribute) from geopackage
+#DEGUB: To remove a table (feature or attribute) from geopackage
 # Warning: must have at least one feature table in gpkg, otherwise, remake geopackage with droneGPKG.py
 python removeFeatureTable.py -g <geopackage_path> -t <table_name>
 ```
