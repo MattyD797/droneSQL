@@ -47,7 +47,7 @@ git checkout -b <branch_name>
 
 #change code
 git add .
-git commit -m "I MADE A CHANCE"
+git commit -m "I MADE A CHANGE"
 git push
 git checkout main
 ```
